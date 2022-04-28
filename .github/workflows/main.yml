@@ -1,0 +1,22 @@
+name: GitHub Actions Deploy
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [main]
+
+jobs:
+  development-deploy:
+    uses: ./.github/workflows/aws-pipeline.yml
+    with:
+      environment: development
+    secrets:
+      account-id: ${{ secrets.AWS_ACCOUNT_ID }}
+      vpc: ${{ secrets.VPC_ID }}
+      subnet-a: ${{ secrets.SUBNET_A }}
+      subnet-b: ${{ secrets.SUBNET_B }}
+      subnet-c: ${{ secrets.SUBNET_C }}
+      aws-region: ${{ secrets.AWS_REGION }}
+      token: ${{ secrets.GITHUB_TOKEN }}
