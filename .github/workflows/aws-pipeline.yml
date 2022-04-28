@@ -144,7 +144,6 @@ jobs:
             SubnetB=${{ secrets.subnet-b }},
             SubnetC=${{ secrets.subnet-c }},
             Image=${{ steps.image-tag.outputs.image }},
-            Subdomain=${{ needs.package.outputs.branch-name }},
             GitHubBranch=${{ needs.package.outputs.branch-name }}
 
 
