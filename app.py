@@ -1,6 +1,10 @@
 from flask import Flask, render_template
 import flask
 app = Flask(__name__)
+@app.route('/healthy')
+def healthy():
+    return 'healthy'
+
 # Index route
 @app.route('/')
 def index():
