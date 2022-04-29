@@ -209,7 +209,7 @@ Resources:
             HealthyThresholdCount: 2
             Name: !Join ['', [ !Ref GitHubBranch, -tg]]
             Port: !Ref ContainerPort
-            Protocol: HTTP
+            Protocol: TCP
             TargetGroupAttributes:
                 -   Key: deregistration_delay.timeout_seconds
                     Value: 60 # default is 300
