@@ -1,13 +1,16 @@
-from flask import Flask
+from flask import Flask, render_template
+import flask
 app = Flask(__name__)
-
-@app.route('/')
-def hello_world():
-    return "Hello, World!"
-
 @app.route('/healthy')
 def healthy():
     return 'healthy'
-    
+
+# Index route
+@app.route('/')
+def index():
+    return render_template('index.html')
+    # We are telling flask to look for a file named index in the templates folder
+    #then render it to the user interface. Note that by default flask looks for templates in a folder named templates.
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+   app.run(host='0.0.0.0', port=5000)
