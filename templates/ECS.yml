@@ -21,9 +21,9 @@ Parameters:
     ContainerPort:
         Type: Number
         Default: 5000
-    LoadBalancerPort:
-        Type: Number
-        Default: 80
+    # LoadBalancerPort:
+    #     Type: Number
+    #     Default: 80
     HealthCheckPath:
         Type: String
         Default: /healthy
@@ -157,17 +157,18 @@ Resources:
                 -   IpProtocol: tcp
                     FromPort: !Ref ContainerPort
                     ToPort: !Ref ContainerPort
-                    SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup
-    LoadBalancerSecurityGroup:
-        Type: AWS::EC2::SecurityGroup
-        Properties:
-            GroupDescription: !Join ['', [!Ref ServiceName, -, !Ref GitHubBranch, -loadbalancer-security-group]]
-            VpcId: !Ref VPC
-            SecurityGroupIngress:
-                -   IpProtocol: tcp
-                    FromPort: !Ref LoadBalancerPort
-                    ToPort: !Ref LoadBalancerPort
+                    # SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup
                     CidrIp: 0.0.0.0/0
+    # LoadBalancerSecurityGroup:
+    #     Type: AWS::EC2::SecurityGroup
+    #     Properties:
+    #         GroupDescription: !Join ['', [!Ref ServiceName, -, !Ref GitHubBranch, -loadbalancer-security-group]]
+    #         VpcId: !Ref VPC
+    #         SecurityGroupIngress:
+    #             -   IpProtocol: tcp
+    #                 FromPort: !Ref LoadBalancerPort
+    #                 ToPort: !Ref LoadBalancerPort
+    #                 CidrIp: 0.0.0.0/0
     Service:
         Type: AWS::ECS::Service
         # This dependency is needed so that the load balancer is setup correctly in time
@@ -194,52 +195,52 @@ Resources:
                         - !Ref SubnetC
                     SecurityGroups:
                         - !Ref ContainerSecurityGroup
-            LoadBalancers:
-                -   ContainerName: !Ref ServiceName
-                    ContainerPort: !Ref ContainerPort
-                    TargetGroupArn: !Ref TargetGroup
-    TargetGroup:
-        Type: AWS::ElasticLoadBalancingV2::TargetGroup
-        Properties:
-            HealthCheckIntervalSeconds: 10
-            # will look for a 200 status code by default unless specified otherwise
-            HealthCheckPath: !Ref HealthCheckPath
-            HealthCheckTimeoutSeconds: 5
-            UnhealthyThresholdCount: 2
-            HealthyThresholdCount: 2
-            Name: !Join ['', [ !Ref GitHubBranch, -tg]]
-            Port: !Ref ContainerPort
-            Protocol: TCP
-            TargetGroupAttributes:
-                -   Key: deregistration_delay.timeout_seconds
-                    Value: 60 # default is 300
-            TargetType: ip
-            VpcId: !Ref VPC
-    ListenerHTTP:
-        Type: AWS::ElasticLoadBalancingV2::Listener
-        Properties:
-            DefaultActions:
-                -   TargetGroupArn: !Ref TargetGroup
-                    Type: forward
-            LoadBalancerArn: !Ref LoadBalancer
-            Port: !Ref LoadBalancerPort
-            Protocol: HTTP
-    LoadBalancer:
-        Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-        Properties:
-            LoadBalancerAttributes:
-                # this is the default, but is specified here in case it needs to be changed
-                -   Key: idle_timeout.timeout_seconds
-                    Value: 1800
-            Name: !Join ['', [ !Ref GitHubBranch, -lb]]
-            # "internal" is also an option
-            Scheme: internet-facing
-            SecurityGroups:
-                - !Ref LoadBalancerSecurityGroup
-            Subnets:
-                - !Ref SubnetA
-                - !Ref SubnetB
-                - !Ref SubnetC
+            # LoadBalancers:
+            #     -   ContainerName: !Ref ServiceName
+            #         ContainerPort: !Ref ContainerPort
+            #         TargetGroupArn: !Ref TargetGroup
+    # TargetGroup:
+    #     Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    #     Properties:
+    #         HealthCheckIntervalSeconds: 10
+    #         # will look for a 200 status code by default unless specified otherwise
+    #         HealthCheckPath: !Ref HealthCheckPath
+    #         HealthCheckTimeoutSeconds: 5
+    #         UnhealthyThresholdCount: 2
+    #         HealthyThresholdCount: 2
+    #         Name: !Join ['', [ !Ref GitHubBranch, -tg]]
+    #         Port: !Ref ContainerPort
+    #         Protocol: HTTP
+    #         TargetGroupAttributes:
+    #             -   Key: deregistration_delay.timeout_seconds
+    #                 Value: 60 # default is 300
+    #         TargetType: ip
+    #         VpcId: !Ref VPC
+    # ListenerHTTP:
+    #     Type: AWS::ElasticLoadBalancingV2::Listener
+    #     Properties:
+    #         DefaultActions:
+    #             -   TargetGroupArn: !Ref TargetGroup
+    #                 Type: forward
+    #         LoadBalancerArn: !Ref LoadBalancer
+    #         Port: !Ref LoadBalancerPort
+    #         Protocol: HTTP
+    # LoadBalancer:
+    #     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    #     Properties:
+    #         LoadBalancerAttributes:
+    #             # this is the default, but is specified here in case it needs to be changed
+    #             -   Key: idle_timeout.timeout_seconds
+    #                 Value: 1800
+    #         Name: !Join ['', [ !Ref GitHubBranch, -lb]]
+    #         # "internal" is also an option
+    #         Scheme: internet-facing
+    #         SecurityGroups:
+    #             - !Ref LoadBalancerSecurityGroup
+    #         Subnets:
+    #             - !Ref SubnetA
+    #             - !Ref SubnetB
+    #             - !Ref SubnetC
     LogGroup:
         Type: AWS::Logs::LogGroup
         Properties:
