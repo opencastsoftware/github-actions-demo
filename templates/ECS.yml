@@ -178,12 +178,12 @@ Resources:
             ServiceName: !Ref ServiceName
             Cluster: !Ref Cluster
             TaskDefinition: !Ref TaskDefinition
-            DeploymentConfiguration:
-                MinimumHealthyPercent: 100
-                MaximumPercent: 200
+            # DeploymentConfiguration:
+            #     MinimumHealthyPercent: 100
+            #     MaximumPercent: 200
             DesiredCount: 2
             # This may need to be adjusted if the container takes a while to start up
-            HealthCheckGracePeriodSeconds: 30
+            # HealthCheckGracePeriodSeconds: 30
             LaunchType: FARGATE
             NetworkConfiguration: 
                 AwsvpcConfiguration:
